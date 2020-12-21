@@ -1,0 +1,67 @@
+
+import("grid")
+import("hexView")
+importFrom("extrafont",
+           "fonttable")
+importFrom("systemfonts",
+           "reset_font_cache")
+importFrom("grDevices",
+           "adjustcolor",
+           "dev.cur",
+           "dev.new",
+           "dev.off",
+           "dev.set",
+           "pdf",
+           "pdfFonts",
+           "postscriptFonts",
+           "rgb",
+           "Type1Font")
+importFrom("utils",
+           "compareVersion")
+importFrom("devoid",
+           "void_dev")
+importFrom("xml2",
+           "read_xml",
+           "write_xml",
+           "xml_add_child",
+           "xml_add_sibling",
+           "xml_attr",
+           "xml_attrs",
+           "xml_children",
+           "xml_comment",
+           "xml_dtd",
+           "xml_find_all",
+           "xml_find_first",
+           "xml_name",
+           "xml_new_root",
+           "xml_replace",
+           "xml_root",
+           "xml_set_attr",
+           "xml_set_text",
+           "xml_text")
+
+export("readDVI",
+
+       "grid.dvi", "dviGrob",
+
+       "grid.latex", "latexGrob",
+       "grid.lualatex", "lualatexGrob",
+       "grid.tikz", "tikzGrob",
+       "grid.tikzpicture", "tikzpictureGrob",
+
+       "luaPreamble",
+       "tikzPreamble", "tikzpicturePreamble", "tikzpicturePostamble",
+
+       "TeXengine", 
+       "latexEngine",
+       "luaEngine",
+       "lualatexEngine",
+       ## "xetexEngine",
+       
+       "noSpecial", "tikzSpecial",
+       
+       "fontPaths")
+
+S3method("print", "DVI")
+S3method("dviGrob", "DVI")
+S3method("dviGrob", "character")

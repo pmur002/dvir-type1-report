@@ -1,0 +1,688 @@
+<html>
+  <head>
+<style type="text/css">
+.inline {
+  background-color: #f7f7f7;
+  border:solid 1px #B0B0B0;
+}
+.error {
+	font-weight: bold;
+	color: #FF0000;
+}
+.warning {
+	font-weight: bold;
+}
+.message {
+	font-style: italic;
+}
+.source, .output, .warning, .error, .message {
+	padding: 0 1em;
+  border:solid 1px #F7F7F7;
+}
+.source {
+  background-color: #f5f5f5;
+}
+.left {
+  text-align: left;
+}
+.right {
+  text-align: right;
+}
+.center {
+  text-align: center;
+}
+.hl.num {
+  color: #AF0F91;
+}
+.hl.str {
+  color: #317ECC;
+}
+.hl.com {
+  color: #AD95AF;
+  font-style: italic;
+}
+.hl.opt {
+  color: #000000;
+}
+.hl.std {
+  color: #585858;
+}
+.hl.kwa {
+  color: #295F94;
+  font-weight: bold;
+}
+.hl.kwb {
+  color: #B05A65;
+}
+.hl.kwc {
+  color: #55aa55;
+}
+.hl.kwd {
+  color: #BC5A65;
+  font-weight: bold;
+}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Letting Go of Type 1 Fonts</title>
+    <style type="text/css">
+    @media print {
+      body { }
+      p.img { text-align: center; page-break-inside: avoid }
+      img.CC { display: inline }
+    }
+    @media screen {
+      body { max-width: 800px; margin: auto }
+      p.img { text-align: center }
+      img.CC { display: inline }
+    }
+    p.date {
+      font-size: smaller;
+      margin: 0;
+    }
+    p.versionHistory {
+      color: gray
+    }
+    p.versionHistory a {
+      color: gray
+    }
+    p.ref {
+      text-indent: -2em;
+      padding-left: 2em;
+    }
+  </style>
+  </head>
+  <body>
+    <h1>Letting Go of Type 1 Fonts</h1>
+    <p>
+      <span style="font-style: italic">by Paul Murrell</span>
+      <a href="http://orcid.org">
+        <img alt="" src="https://www.stat.auckland.ac.nz/~paul/ORCID/ORCiD.png" style="width: 16px; height: 16px; vertical-align: middle">
+      </a>
+      <span style="font-family: mono; font-size: small">
+        <a href="http://orcid.org/0000-0002-3224-8858">http://orcid.org/0000-0002-3224-8858</a>
+      </span>
+    </p>
+    <p class="date">
+    Version 1:
+Sunday 20 December 2020
+  </p>
+
+
+    <hr>
+    <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img class="CC" alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png"></a><br><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">This document</span>
+    by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Paul
+    Murrell</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative
+    Commons Attribution 4.0 International License</a>.
+  </p>
+    <hr>
+    <p>
+    The 'dvir' package for R is limited in 
+    that it is only known to work on an (Ubuntu) Linux
+    distribution with (at least) a full TeX installation.
+    Unfortunately, not even that is true for recent stable
+    Linux releases, like Ubuntu 20.04, because of a dependence on Type 1 fonts.
+    This report describes an update to the 'dvir' package, 
+    plus some guidelines on avoiding Type 1 fonts, so that
+    'dvir' works on recent stable Linux distributions 
+    (or at least Ubuntu 20.04).
+  </p>
+    <div>
+      <h2>Table of Contents:</h2>
+      <ul style="list-style: none">
+        <li>
+          <a href="#problem">1. The problem</a>
+        </li>
+        <li>
+          <a href="#solution">2. The solution</a>
+        </li>
+        <li>
+          <a href="#details">3. The details</a>
+        </li>
+        <li>
+          <a href="#requirements">4. Technical requirements</a>
+        </li>
+        <li>
+          <a href="#Resources">5. Resources</a>
+        </li>
+        <li>
+          <a href="#references">6. References</a>
+        </li>
+      </ul>
+    </div>
+    <h2>
+      <a name="problem">1. The problem</a>
+    </h2>
+    <p>
+    The 'dvir' package (<a href="#pkg:dvir">Murrell, 2020c</a>, <a href="#murrell-dvir">Murrell, 2018</a>,
+    <a href="#murrell-dvir-luatex-2020">Murrell, 2020b</a>, <a href="#murrell-dvir-tikz-2020">Murrell, 2020a</a>)
+    provides functions for rendering TeX output on R graphics devices.
+    For example, the following code renders a simple TeX mathematical
+    expression in R graphics (on Ubuntu 18.04).
+  </p>
+<div class="chunk" id="unnamed-chunk-3"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(dvir)</span>
+<span class="hl kwd">grid.latex</span><span class="hl std">(</span><span class="hl str">&quot;$x - \\mu$&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div></div>
+    <p>
+      <img src="demo.png">
+    </p>
+    <p>
+    Unfortunately, not even that simple example works on recent
+    stable Linux distributions.  For example, the output below
+    shows what 'dvir' (version 0.3-0) produces on Ubuntu 20.04.
+  </p>
+<div class="chunk" id="unnamed-chunk-4"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(dvir,</span> <span class="hl kwc">lib.loc</span><span class="hl std">=</span><span class="hl str">&quot;/opt/R/dvir/version-0.3-0&quot;</span><span class="hl std">)</span>
+<span class="hl kwd">grid.latex</span><span class="hl std">(</span><span class="hl str">&quot;$x - \\mu$&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" class="plot" /></div></div>
+
+    <h2>
+      <a name="solution">2. The solution</a>
+    </h2>
+    <p>
+    There are two steps involved in the solution to this problem:
+  </p>
+    <ol>
+      <li>
+      Ensure that the TeX engine 
+      makes use of an Open Type (or True Type) font,
+      rather than a Type 1 font.
+    </li>
+      <li>
+      Use the latest version of 'dvir', version 0.3-1 or higher.
+    </li>
+    </ol>
+    <p>
+    The following code provides a simple demonstration.
+    First, we load version 0.3-1 of the 'dvir' package.
+    Then, we need to complicate the call to 
+    <code>grid.latex</code> a little bit.
+    The core TeX code is still just a simple equation, but
+    we specify a preamble that loads the <code>unicode-math</code>
+    package (<a href="#unicode-math">Robertson et al., 2019</a>) and we select LuaTeX as the TeX engine.
+    This means that the TeX engine will use the Latin Modern Math
+    font (<a href="#latin-modern-math">Boguslaw Jackowski and Pianowski, 2014</a>), 
+    which is an Open Type font, and the resulting output
+    is back to what we would like.
+  </p>
+<div class="chunk" id="unnamed-chunk-6"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(dvir,</span> <span class="hl kwc">lib.loc</span><span class="hl std">=</span><span class="hl str">&quot;/opt/R/dvir/version-0.3-1&quot;</span><span class="hl std">)</span>
+<span class="hl std">preamble</span> <span class="hl kwb">&lt;-</span> <span class="hl str">&quot;
+\\documentclass[12pt]{standalone}
+\\usepackage{unicode-math}
+\\begin{document}
+&quot;</span>
+<span class="hl kwd">grid.latex</span><span class="hl std">(</span><span class="hl str">&quot;$x - \\mu$&quot;</span><span class="hl std">,</span>
+           <span class="hl kwc">preamble</span><span class="hl std">=preamble,</span>
+           <span class="hl kwc">engine</span><span class="hl std">=lualatexEngine)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" class="plot" /></div></div>
+    <h2>
+      <a name="details">3. The details</a>
+    </h2>
+    <p>
+    This section explains the problem, and the solution, in more detail.
+  </p>
+    <h3>LaTeX uses Type 1 fonts by default</h3>
+    <p>
+    The following output shows the relevant part of
+    the DVI output that is generated by the default LaTeX engine 
+    on Ubuntu 20.04.
+  </p>
+<div class="chunk" id="unnamed-chunk-7"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">dviFile</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">typeset</span><span class="hl std">(</span><span class="hl str">&quot;$x - \\mu$&quot;</span><span class="hl std">)</span>
+<span class="hl std">dvi</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">readDVI</span><span class="hl std">(dviFile)</span>
+</pre></div>
+</div></div>
+<div class="chunk" id="unnamed-chunk-8"><div class="rcode"><div class="output"><pre class="knitr r">  fnt_def_1    fontnum=27, checksum=-1209964637, scale=786432, design=786432,
+               fontname=cmmi12
+  fnt_num_27
+  set_char_120 'x'
+  w3           b=174760 
+  fnt_def_1    fontnum=30, checksum=555887770, scale=786432, design=655360,
+               fontname=cmsy10
+  fnt_num_30
+  set_char_0   ''
+  w0 
+  fnt_num_27
+  set_char_22  ''
+</pre></div>
+</div></div>
+    <p>
+    This shows that LaTeX has used <code>cmmi12</code> (Computer Modern Math
+    Italic) and <code>cmsy10</code> (Computer Modern Symbol) fonts to
+    typeset the equation.  These correspond to Type 1 (<code>.pfb</code>)
+    fonts.
+  </p>
+<div class="chunk" id="unnamed-chunk-9"><div class="rcode"><div class="source"><pre class="knitr bash">kpsewhich -format=.pfb cmmi12
+</pre></div>
+
+<div class="output"><pre class="knitr bash">  /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb
+</pre></div>
+</div></div>
+<div class="chunk" id="unnamed-chunk-10"><div class="rcode"><div class="source"><pre class="knitr bash">kpsewhich -format=.pfb cmsy10
+</pre></div>
+
+<div class="output"><pre class="knitr bash">  /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
+</pre></div>
+</div></div>
+    <p>
+    The problem with that is that Ubuntu 20.04 has a 
+    Pango (<a href="#pango">Taylor et al., 2020</a>)
+    version above 1.44.
+  </p>
+<div class="chunk" id="unnamed-chunk-11"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">grSoftVersion</span><span class="hl std">()</span>
+</pre></div>
+<div class="output"><pre class="knitr r">                     cairo                  cairoFT                    pango                   libpng 
+                  &quot;1.16.0&quot;                       &quot;&quot;                 &quot;1.44.7&quot;                 &quot;1.6.37&quot; 
+                      jpeg                  libtiff 
+                     &quot;8.0&quot; &quot;LIBTIFF, Version 4.1.0&quot;
+</pre></div>
+</div></div>
+    <p>
+    The problem with that is that Pango versions above 1.44 have abandoned
+    support for Type 1 fonts and the problem with that is that R's Cairo-based
+    graphics devices make use of Pango for typesetting text, so when
+    <code>grid.latex</code> attempts to draw text using the same Type 1 
+    fonts that the TeX engine used, on the default (Linux) graphics device
+    (a Cairo X11 window or a Cairo PNG file), it fails.  The result is
+    the boxes containing hexadecimal values that indicate missing glyphs.
+  </p>
+    <h3>A PDF/PostScript workaround</h3>
+    <p>
+    The problem is limited to Cairo-based graphics devices, so a 
+    relatively simple workaround is to draw on a PDF or PostScript 
+    graphics device instead.  The following code demonstrates that
+    this workaround works on Ubuntu 20.04 even with the old version
+    of 'dvir' (0.3-0).
+  </p>
+
+<div class="chunk" id="unnamed-chunk-13"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(dvir,</span> <span class="hl kwc">lib.loc</span><span class="hl std">=</span><span class="hl str">&quot;/opt/R/dvir/version-0.3-0&quot;</span><span class="hl std">)</span>
+<span class="hl std">dg</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">dviGrob</span><span class="hl std">(dvi)</span>
+<span class="hl kwd">pdf</span><span class="hl std">(</span><span class="hl str">&quot;workaround.pdf&quot;</span><span class="hl std">,</span> <span class="hl kwc">width</span><span class="hl std">=</span><span class="hl num">2</span><span class="hl std">,</span> <span class="hl kwc">height</span><span class="hl std">=</span><span class="hl num">1</span><span class="hl std">)</span>
+<span class="hl kwd">grid.draw</span><span class="hl std">(dg)</span>
+<span class="hl kwd">dev.off</span><span class="hl std">()</span>
+<span class="hl kwd">embedFonts</span><span class="hl std">(</span><span class="hl str">&quot;workaround.pdf&quot;</span><span class="hl std">,</span> <span class="hl kwc">outfile</span><span class="hl std">=</span><span class="hl str">&quot;workaround-embed.pdf&quot;</span><span class="hl std">,</span>
+           <span class="hl kwc">fontpaths</span><span class="hl std">=</span><span class="hl kwd">fontPaths</span><span class="hl std">(dg))</span>
+</pre></div>
+</div></div>
+
+    <p>
+      <img src="workaround-embed.png">
+    </p>
+    <h3>Getting latex to avoid Type 1 fonts</h3>
+    <p>
+    If we want to use the Cairo-based graphics devices on a recent stable 
+    Linux, we must avoid
+    Type 1 fonts.  This means that we must make sure that the TeX engine
+    does not use Type 1 fonts because 'dvir', by design,
+    uses exactly the same fonts that the TeX engine uses.
+  </p>
+    <p>
+    To demonstrate the problem again, 
+    the following code shows that, even with simple text, the default LaTeX
+    engine produces an undesirable result.
+  </p>
+<div class="chunk" id="unnamed-chunk-15"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(dvir,</span> <span class="hl kwc">lib.loc</span><span class="hl std">=</span><span class="hl str">&quot;/opt/R/dvir/version-0.3-0&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div></div>
+<div class="chunk" id="unnamed-chunk-16"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">grid.latex</span><span class="hl std">(</span><span class="hl str">&quot;Test&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" class="plot" /></div></div>
+
+    <p>
+    One easy way to avoid Type 1 fonts is to use the LuaTeX engine,
+    rather than the default LaTeX engine, because LuaTeX makes it easy to
+    select different fonts.  Then it is just a matter of selecting 
+    an Open Type or True Type font in the TeX code.
+  </p>
+    <p>
+    For a standard Computer Modern look, the <code>lmodern</code> 
+    package (<a href="#lmodern">Harders, 2020</a>)
+    automatically uses Latin Modern Roman 
+    (<a href="#latin-modern">Jackowski et al., 2020</a>) as the default 
+    (Open Type) font.
+  </p>
+    <p>
+    The following code shows that using the LuaTeX engine (and version 0.3-1
+    of 'dvir') and loading the
+    <code>lmodern</code> package fixes the problem (because we are
+    now using an Open Type font;  Latin Modern Roman).
+  </p>
+    <!-- 
+       NOTE to self:  this example actually also works with 0.3-0,
+       by accident, because the font search falls back to looking 
+       for a TeX font and, in this case, that finds a Type 1 version
+       of Latin Modern Roman.  NOT worth getting into here.
+  -->
+<div class="chunk" id="unnamed-chunk-18"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(dvir,</span> <span class="hl kwc">lib.loc</span><span class="hl std">=</span><span class="hl str">&quot;/opt/R/dvir/version-0.3-1&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div></div>
+<div class="chunk" id="unnamed-chunk-19"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">preamble</span> <span class="hl kwb">&lt;-</span> <span class="hl str">&quot;
+\\documentclass[12pt]{standalone}
+\\usepackage{lmodern}
+\\begin{document}
+&quot;</span>
+<span class="hl kwd">grid.latex</span><span class="hl std">(</span><span class="hl str">&quot;Test&quot;</span><span class="hl std">,</span>
+           <span class="hl kwc">preamble</span><span class="hl std">=preamble,</span>
+           <span class="hl kwc">engine</span><span class="hl std">=lualatexEngine)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" class="plot" /></div></div>
+
+    <p>
+    The following code repeats the code from 
+    <a href="#solution">The solution</a> Section.  This shows that using the 
+    LuaTeX engine and loading the <code>unicode-math</code>
+    package, which automatically loads the Latin Modern Math (Open Type) font
+    for TeX math mode, fixes the problem for a simple equation.
+  </p>
+<div class="chunk" id="unnamed-chunk-21"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(dvir,</span> <span class="hl kwc">lib.loc</span><span class="hl std">=</span><span class="hl str">&quot;/opt/R/dvir/version-0.3-1&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div></div>
+<div class="chunk" id="unnamed-chunk-22"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">preamble</span> <span class="hl kwb">&lt;-</span> <span class="hl str">&quot;
+\\documentclass[12pt]{standalone}
+\\usepackage{unicode-math}
+\\begin{document}
+&quot;</span>
+<span class="hl kwd">grid.latex</span><span class="hl std">(</span><span class="hl str">&quot;$x - \\mu$&quot;</span><span class="hl std">,</span>
+           <span class="hl kwc">preamble</span><span class="hl std">=preamble,</span>
+           <span class="hl kwc">engine</span><span class="hl std">=lualatexEngine)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" class="plot" /></div></div>
+
+    <h3>Improvements to the 'dvir' package</h3>
+    <p>
+    In addition to making sure that the TeX engine uses an Open Type
+    or True Type font, we also need to use the updated version of 'dvir'
+    (0.3-1).
+  </p>
+    <p>
+    This new version contains two important changes.  
+    First of all, 'dvir' now makes use of the 'systemfonts' package 
+    (<a href="#pkg:systemfonts">Pedersen et al., 2020</a>)
+    to get information about installed fonts.
+    This is because the <code>systemfonts::system_fonts</code> function
+    can tell us about Open Type fonts.  
+    Previous versions of 'dvir' made use of the
+    <code>fonttable</code> function from the 'extrafont' package 
+    (<a href="#pkg:extrafont">Chang, 2014</a>), 
+    but that can only tell us
+    about True Type fonts.
+  </p>
+    <p>
+    One complication is the fact that 
+    <code>system_fonts</code> does not include information about 
+    <code>.afm</code> files (while <code>fonttable</code> does),
+    for the very good reason that Open Type fonts do not 
+    have <code>.afm</code> files.  Only Type 1 fonts have <code>.afm</code>
+    files, which contain metric information about the glyphs in the font.
+    R graphics makes use of <code>.afm</code> files when drawing to a 
+    PDF or PostScript device. The 'extrafont' package actually generates
+    <code>.afm</code> files for True Type fonts (so that they can be used
+    on PDF and PostScript devices).  
+    However, we are interested here in using Open Type fonts on Cairo-based
+    devices, so the lack of <code>.afm</code> information is not a problem
+    ('dvir' uses TTX (<a href="#fonttools"></a>) 
+    to extract metric information from the 
+    Open Type font).  Using Open Type fonts on PDF and PostScript devices
+    is still an issue, but we will leave that for another day.
+  </p>
+    <p>
+    The second important change in 'dvir' version 0.3-1 involves
+    the support of <code>set_char3</code> operations in DVI files.
+    These operations specify a character to draw as a 3-byte value.
+    Previously, 'dvir' has assumed that these operations only 
+    represent non-UNICODE glyphs in a font (where the first byte is 
+    <code>0F</code>; see <a href="#murrell-dvir-luatex-2020">Murrell, 2020b</a> 
+    for details). 
+    This assumption is horribly exposed by the simple 
+    math equation example.  The following output shows the relevant DVI
+    code generated by the LuaTeX engine using the <code>unicode-math</code>
+    package.
+  </p>
+<div class="chunk" id="unnamed-chunk-24"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(dvir,</span> <span class="hl kwc">lib.loc</span><span class="hl std">=</span><span class="hl str">&quot;/opt/R/dvir/version-0.3-1&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div></div>
+<div class="chunk" id="unnamed-chunk-25"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">preamble</span> <span class="hl kwb">&lt;-</span> <span class="hl str">&quot;
+\\documentclass[12pt]{standalone}
+\\usepackage{unicode-math}
+\\begin{document}
+&quot;</span>
+<span class="hl std">dviFile</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">typeset</span><span class="hl std">(</span><span class="hl str">&quot;$x - \\mu$&quot;</span><span class="hl std">,</span>
+                   <span class="hl kwc">preamble</span><span class="hl std">=preamble,</span>
+                   <span class="hl kwc">engine</span><span class="hl std">=lualatexEngine)</span>
+<span class="hl std">dvi</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">readDVI</span><span class="hl std">(dviFile)</span>
+</pre></div>
+</div></div>
+<div class="chunk" id="unnamed-chunk-26"><div class="rcode"><div class="output"><pre class="knitr r">  fnt_def_1    fontnum=29, checksum=0, scale=786432, design=655360,
+               fontname=[latinmodern-math.otf]:mode=base;script=math;language=dflt;
+  fnt_num_29
+  set_char3    01 d4 65
+  right3       b=174744
+  set_char2    22 12
+  right3       b=174744
+  set_char3    01 d7 07
+</pre></div>
+</div></div>
+
+    <p>
+    This shows that both the 'x' and the mu characters are 
+    represented by <code>set_char3</code> operations
+    (<code>01 d4 65</code> and <code>01 d7 07</code>).
+    These specify the character to draw as 
+    UNICODE code points in UTF-32 encoding (with the first byte 
+    assumed to be zero).
+    Version 0.3-1 of 'dvir' now handles <code>set_char3</code>
+    operations of this type.
+  </p>
+    <h3>Summary</h3>
+    <p>
+    When using 'dvir' on a recent stable Linux, like Ubuntu 20.04,
+    use the LuaTeX engine, write TeX code that selects an Open Type
+    or True Type font, and use 'dvir' version 0.3-1 or higher.
+  </p>
+    <h2>
+      <a name="requirements">4. Technical requirements</a>
+    </h2>
+    <p>
+    The examples and discussion in this document relate to <a href="https://github.com/pmur002/dvir/releases/tag/v0.3-1">version
+    0.3-1</a> of the 'dvir' package.
+  </p>
+    <p>
+    This report was generated within a Docker container
+    (see the <a href="#Resources">Resources</a> section below).
+  </p>
+    <h2>
+      <a name="Resources">5. Resources</a>
+    </h2>
+    <ul>
+      <li>
+      The <a href="dvir-type1.cml">raw source file</a> for this
+      report, a <a href="dvir-type1.xml">valid XML</a>
+      transformation of the source file, a <a href="dvir-type1.Rhtml">'knitr' document</a> generated from
+      the XML file, 
+      two <a href="toc.R">R</a> <a href="bib.R">files</a> and
+      the <a href="dvir-type1.bib">bibtex file</a>
+      that are used to generate the table of contents and reference sections,
+      two <a href="common.xsl">XSL</a> <a href="knitr.xsl">files</a> and an 
+      <a href="knit.R">R file</a> that are used to transform the XML to
+      the 'knitr' document, and a <a href="Makefile">Makefile</a> that
+      contains code for the other transformations and coordinates
+      everything.  
+      These materials are also available
+      on <a href="https://github.com/pmur002/dvir-type1-report/releases/tag/v1">github</a>.
+    </li>
+      <li>
+      This report was generated within a 
+      <a href="https://www.docker.com/">Docker</a> container.
+      The Docker command to build the report is included in the Makefile above.
+      The Docker image for the container is available from
+      <a href="https://hub.docker.com/r/pmur002/dvir-type1/">Docker Hub</a>;
+      alternatively, the image can be rebuilt from its 
+      <a href="Dockerfile">Dockerfile</a>.
+    </li>
+    </ul>
+    <h2>How to cite this document</h2>
+    <p>
+    Murrell, P. (2020). 
+    "Letting Go of Type 1 Fonts" 
+    Technical Report 2020-??, Department of Statistics, 
+    The University of Auckland. version 1. 
+    [ <a href="how-to-cite.bib">bib</a> |
+      <a href="http://doi.org/">DOI</a> | 
+      <a href="http://stattech.blogs.auckland.ac.nz/">http</a> ]
+  </p>
+    <h2>
+      <a name="references">6. References</a>
+    </h2>
+    <dl>
+      <dt>
+[<a name="latin-modern-math">Boguslaw Jackowski and Pianowski, 2014</a>]
+</dt>
+      <dd>
+Boguslaw Jackowski, P. S. and Pianowski, P. (2014).
+ <em>The Latin Modern Math (LM Math) font</em>.
+[ <a href="dvir-type1-bib_bib.html#latin-modern-math">bib</a> | 
+<a href="http://www.gust.org.pl/projects/e-foundry/lm-math">http</a> ]
+
+</dd>
+      <dt>
+[<a name="pkg:extrafont">Chang, 2014</a>]
+</dt>
+      <dd>
+Chang, W. (2014).
+ <em>extrafont: Tools for using fonts</em>.
+ R package version 0.17.
+[ <a href="dvir-type1-bib_bib.html#pkg:extrafont">bib</a> | 
+<a href="https://CRAN.R-project.org/package=extrafont">http</a> ]
+
+</dd>
+      <dt>
+[<a name="lmodern">Harders, 2020</a>]
+</dt>
+      <dd>
+Harders, H. (2020).
+ <em>The lmodern package for TeX</em>.
+[ <a href="dvir-type1-bib_bib.html#lmodern">bib</a> | 
+<a href="https://ctan.org/tex-archive/info/lmodern?lang=en">http</a> ]
+
+</dd>
+      <dt>
+[<a name="latin-modern">Jackowski et al., 2020</a>]
+</dt>
+      <dd>
+Jackowski, B., Nowacki, J. M., and Wolinski, M. (2020).
+ <em>The Latin Modern (LM) Family of Fonts</em>.
+[ <a href="dvir-type1-bib_bib.html#latin-modern">bib</a> | 
+<a href="http://www.gust.org.pl/projects/e-foundry/latin-modern">http</a> ]
+
+</dd>
+      <dt>
+[<a name="murrell-dvir">Murrell, 2018</a>]
+</dt>
+      <dd>
+Murrell, P. (2018).
+ Revisiting mathematical equations in R: the 'dvir' package.
+ Technical Report 2018-08, Department of Statistics, The University of
+  Auckland.
+ version 2.
+[ <a href="dvir-type1-bib_bib.html#murrell-dvir">bib</a> ]
+
+</dd>
+      <dt>
+[<a name="murrell-dvir-tikz-2020">Murrell, 2020a</a>]
+</dt>
+      <dd>
+Murrell, P. (2020a).
+ Adding tikz support to 'dvir'.
+ Technical Report 2020-05, Department of Statistics, The University of
+  Auckland.
+ version 1.
+[ <a href="dvir-type1-bib_bib.html#murrell-dvir-tikz-2020">bib</a> | 
+<a href="http://dx.doi.org/10.17608/k6.auckland.13283900">DOI</a> | 
+<a href="https://stattech.blogs.auckland.ac.nz/2020/11/25/2020-05-adding-tikz-support-to-dvir">http</a> ]
+
+</dd>
+      <dt>
+[<a name="murrell-dvir-luatex-2020">Murrell, 2020b</a>]
+</dt>
+      <dd>
+Murrell, P. (2020b).
+ The agony and the ecstacy: Adding luatex support to 'dvir'.
+ Technical Report 2020-02, Department of Statistics, The University of
+  Auckland.
+ version 1.
+[ <a href="dvir-type1-bib_bib.html#murrell-dvir-luatex-2020">bib</a> | 
+<a href="http://doi.org/10.17608/k6.auckland.12133281">DOI</a> | 
+<a href="http://stattech.blogs.auckland.ac.nz/2020/04/16/2020-02-the-agony-and-the-ecstacy-adding-luatex-support-to-dvir">http</a> ]
+
+</dd>
+      <dt>
+[<a name="pkg:dvir">Murrell, 2020c</a>]
+</dt>
+      <dd>
+Murrell, P. (2020c).
+ <em>dvir: Render DVI Files</em>.
+ R package version 0.3-1.
+[ <a href="dvir-type1-bib_bib.html#pkg:dvir">bib</a> ]
+
+</dd>
+      <dt>
+[<a name="pkg:systemfonts">Pedersen et al., 2020</a>]
+</dt>
+      <dd>
+Pedersen, T. L., Ooms, J., and Govett, D. (2020).
+ <em>systemfonts: System Native Font Finding</em>.
+ R package version 0.3.2.9000.
+[ <a href="dvir-type1-bib_bib.html#pkg:systemfonts">bib</a> | 
+<a href="https://github.com/r-lib/systemfonts">http</a> ]
+
+</dd>
+      <dt>
+[<a name="R">R Core Team, 2019</a>]
+</dt>
+      <dd>
+R Core Team (2019).
+ <em>R: A Language and Environment for Statistical Computing</em>.
+ R Foundation for Statistical Computing, Vienna, Austria.
+[ <a href="dvir-type1-bib_bib.html#R">bib</a> | 
+<a href="https://www.R-project.org/">http</a> ]
+
+</dd>
+      <dt>
+[<a name="unicode-math">Robertson et al., 2019</a>]
+</dt>
+      <dd>
+Robertson, W., Stephani, P., Wright, J., and Hosny, K. (2019).
+ <em>unicode-math: Unicode mathematics support for XeTeX and LuaTeX</em>.
+[ <a href="dvir-type1-bib_bib.html#unicode-math">bib</a> | 
+<a href="https://ctan.org/pkg/unicode-math?lang=en">http</a> ]
+
+</dd>
+      <dt>
+[<a name="pango">Taylor et al., 2020</a>]
+</dt>
+      <dd>
+Taylor, O., Levien, R., and Esfahbod, B. (2020).
+ <em>Pango</em>.
+[ <a href="dvir-type1-bib_bib.html#pango">bib</a> | 
+<a href="https://pango.gnome.org/">http</a> ]
+
+</dd>
+      <dt>
+[<a name="fonttools">van Rossum et al., 2020</a>]
+</dt>
+      <dd>
+van Rossum, J., Wise, P., and Esfahbod, B. (2020).
+ <em>FontTools: A library to manipulate font files from Python</em>.
+[ <a href="dvir-type1-bib_bib.html#fonttools">bib</a> | 
+<a href="https://github.com/fonttools/fonttools">http</a> ]
+
+</dd>
+    </dl>
+    <hr>
+    <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img class="CC" alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png"></a><br><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">This document</span>
+    by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Paul
+    Murrell</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative
+    Commons Attribution 4.0 International License</a>.
+  </p>
+  </body>
+</html>

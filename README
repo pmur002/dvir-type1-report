@@ -1,0 +1,76 @@
+
++ The symptom is that 'dvir' does not work on Cairo devices in Ubuntu 20.04, 
+  not even ...
+
+  library(dvir)
+  grid.latex("$x - \\mu$")
+
+  ... which just produces three missing character glyphs.
+
++ The problem is that Ubuntu 20.04 has Pango > 1.44, which means that 
+  Cairo devices refuse to use Type 1 fonts.
+
+  (see https://developer.r-project.org/Blog/public/2020/04/17/changes-to-symbol-fonts-for-cairo-graphics-devices/index.html)
+
+  (this was discovered on Ubuntu 20.04, but it will occur on any OS
+   with recent Pango versions)
+
+  TeX (latex) uses Type 1 versions of the Computer Modern fonts by default,
+  so 'dvir' correctly finds a Type 1 font (like cmmi12.pfb) and 
+  attempts to draw text with that font and that produces garbage
+  (on a Cairo device).
+
++ The solution is two-fold (at least):
+
+  1. 
+  We need to get TeX to use a TrueType or OpenType font (NOT a Type 1 font).
+
+  This turns out to be pretty easy.  
+
+  FIRST, we use LuaTeX (lualatex) instead of TeX (latex), because that
+  makes it easy to select system fonts.
+
+  TEHN, we can use something like ...
+
+  \usepackage{fontspec} 
+  \setmainfont[Mapping=text-tex]{Lato Light} 
+
+  ... to set the main text font and something like ...
+
+  \usepackage{unicode-math}
+  % \setmathfont{latinmodern-math}
+
+  ... to set the math font.  
+
+  This means that lualatex will make use of a TrueType or OpenType font,
+  so 'dvir' will find a TrueType or OpenType font (like latinmodern-math.otf)
+  and it will draw text correctly (on a Cairo device).  
+  
+  2. 
+  We need to fix a couple of things in 'dvir'.
+
+  a)
+  Add support for OpenType fonts to 'dvir'
+
+  To do this we make use of the systemfonts::system_fonts() table
+  (in addition to extrafont::fonttable(), because that only contains 
+   TrueType fonts)
+  to look up font information based on the font file that we get from
+  the LuaTeX DVI output (plus luaotfload-tool).
+  That does not get us quite as much font info (it does not contain .afm
+  file info), but that is ok for drawing on Cairo devices (because we
+  get the metric info from the font file via ttx).
+  This could be a problem in the future if we try to add support to 'dvir'
+  for LuaTeX with non-ComputerModern fonts on non-Cairo devices (like pdf()).
+
+  b)
+  Improve support for set3 operations in DVI output from LuaTeX
+
+  This was only set up to handle a non-UNICODE character (where the first
+  byte is 0x0f), but it can also just be a 3-byte UNICODE character
+  (in UTF32BE format).
+
++ NOTE that the solution requires BOTH the new version of 'dvir'
+  AND the user to make use of fontspec and/or unicode-math in their
+  TeX code AND the user to use the LuaTeX engine.
+

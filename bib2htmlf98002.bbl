@@ -1,0 +1,56 @@
+\begin{thebibliography}{}
+
+\bibitem[Boguslaw~Jackowski and Pianowski, 2014]{latin-modern-math}
+Boguslaw~Jackowski, P.~S. and Pianowski, P. (2014).
+\newblock {\em The {Latin Modern Math} ({LM Math}) font}.
+
+\bibitem[Chang, 2014]{pkg:extrafont}
+Chang, W. (2014).
+\newblock {\em extrafont: Tools for using fonts}.
+\newblock R package version 0.17.
+
+\bibitem[Murrell, 2018]{murrell-dvir}
+Murrell, P. (2018).
+\newblock Revisiting mathematical equations in {R}: the 'dvir' package.
+\newblock Technical Report 2018-08, Department of Statistics, The University of
+  Auckland.
+\newblock version 2.
+
+\bibitem[Murrell, 2020a]{murrell-dvir-tikz-2020}
+Murrell, P. (2020a).
+\newblock Adding tikz support to 'dvir'.
+\newblock Technical Report 2020-05, Department of Statistics, The University of
+  Auckland.
+\newblock version 1.
+
+\bibitem[Murrell, 2020b]{murrell-dvir-luatex-2020}
+Murrell, P. (2020b).
+\newblock The agony and the ecstacy: Adding luatex support to 'dvir'.
+\newblock Technical Report 2020-02, Department of Statistics, The University of
+  Auckland.
+\newblock version 1.
+
+\bibitem[Murrell, 2020c]{pkg:dvir}
+Murrell, P. (2020c).
+\newblock {\em dvir: Render DVI Files}.
+\newblock R package version 0.3-1.
+
+\bibitem[Pedersen et~al., 2020]{pkg:systemfonts}
+Pedersen, T.~L., Ooms, J., and Govett, D. (2020).
+\newblock {\em systemfonts: System Native Font Finding}.
+\newblock R package version 0.3.2.9000.
+
+\bibitem[{R Core Team}, 2019]{R}
+{R Core Team} (2019).
+\newblock {\em R: A Language and Environment for Statistical Computing}.
+\newblock R Foundation for Statistical Computing, Vienna, Austria.
+
+\bibitem[Robertson et~al., 2019]{unicode-math}
+Robertson, W., Stephani, P., Wright, J., and Hosny, K. (2019).
+\newblock {\em unicode-math: Unicode mathematics support for XeTeX and LuaTeX}.
+
+\bibitem[Taylor et~al., 2020]{pango}
+Taylor, O., Levien, R., and Esfahbod, B. (2020).
+\newblock {\em Pango}.
+
+\end{thebibliography}

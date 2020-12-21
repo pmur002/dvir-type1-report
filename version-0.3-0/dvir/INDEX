@@ -1,0 +1,9 @@
+fontPaths               Generate paths to font files
+grid.dvi                Render DVI File in R
+grid.latex              Render LaTeX in R
+grid.lualatex           Render LaTeX in R with LuaTeX engine
+grid.tikz               Render a TikZ picture in R
+latexEngine             TeX Engines
+luaEngine               LuaTeX engines
+noSpecial               DVI specials handlers
+readDVI                 Read DVI File
