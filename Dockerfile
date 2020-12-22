@@ -45,14 +45,14 @@ RUN Rscript -e 'library(devtools); install_version("devoid", "0.1.1", repos="htt
 RUN Rscript -e 'library(devtools); install_version("hexView", "0.3-4", repos="https://cran.rstudio.com/")'
 
 # Using COPY will update (invalidate cache) if the tar ball has been modified!
-COPY dvir_0.3-0.tar.gz /tmp
 RUN mkdir -p /opt/R/dvir/version-0.3-0/
+COPY dvir_0.3-0.tar.gz /tmp
 RUN R CMD INSTALL --library=/opt/R/dvir/version-0.3-0 /tmp/dvir_0.3-0.tar.gz
-COPY dvir_0.3-1.tar.gz /tmp/
+# RUN Rscript -e 'devtools::install_github("pmur002/dvir@v0.3-0", lib="/opt/R/dvir/version-0.3-0")'
 RUN mkdir -p /opt/R/dvir/version-0.3-1/
-RUN R CMD INSTALL --library=/opt/R/dvir/version-0.3-1/ /tmp/dvir_0.3-1.tar.gz
-# RUN Rscript -e 'devtools::install_github("pmur002/dvir@v0.3-0", lib="version-0.3-0")'
-# RUN Rscript -e 'devtools::install_github("pmur002/dvir@v0.3-1", lib="version-03.-1")'
+# COPY dvir_0.3-1.tar.gz /tmp/
+# RUN R CMD INSTALL --library=/opt/R/dvir/version-0.3-1/ /tmp/dvir_0.3-1.tar.gz
+RUN Rscript -e 'devtools::install_github("pmur002/dvir@v0.3-1", lib="/opt/R/dvir/version-0.3-1")'
 
 # Enable ImageMagick ghostscript-based conversions
 RUN awk '!/<policy domain="coder" rights="none" pattern="P/ { print }' /etc/ImageMagick-6/policy.xml > tmp.xml && mv tmp.xml /etc/ImageMagick-6/policy.xml
