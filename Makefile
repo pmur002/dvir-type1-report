@@ -34,7 +34,7 @@ docker:
 
 web:
 	make docker
-	cp -r ../dvir-type1-report/* ~/Web/Reports/dvir/tikz/
+	cp -r ../dvir-type1-report/* ~/Web/Reports/dvir/type1/
 
 zip:
 	make docker
